@@ -1,6 +1,6 @@
-import { render, screen, within } from '@redwoodjs/testing/web'
-import { Loading, Empty, Failure, Success } from './ArticlesCell'
-import { standard } from './ArticlesCell.mock'
+import { render, screen } from '@redwoodjs/testing/web'
+import { Loading, Empty, Failure, Success } from './CommentsCell'
+import { standard } from './CommentsCell.mock'
 
 // Generated boilerplate tests do not account for all circumstances
 // and can fail without adjustments, e.g. Float and DateTime types.
@@ -8,7 +8,7 @@ import { standard } from './ArticlesCell.mock'
 //        https://redwoodjs.com/docs/testing#testing-cells
 // https://redwoodjs.com/docs/testing#jest-expect-type-considerations
 
-describe('ArticlesCell', () => {
+describe('CommentsCell', () => {
   it('renders Loading successfully', () => {
     expect(() => {
       render(<Loading />)
@@ -18,7 +18,9 @@ describe('ArticlesCell', () => {
   it('renders Empty successfully', async () => {
     expect(() => {
       render(<Empty />)
-    }).not.toThrow()
+      render(<Empty />)
+      expect(screen.getByText('No comments yet')).toBeInTheDocument()
+    })
   })
 
   it('renders Failure successfully', async () => {
@@ -34,17 +36,11 @@ describe('ArticlesCell', () => {
   // 2. Add test: expect(screen.getByText('Hello, world')).toBeInTheDocument()
 
   it('renders Success successfully', async () => {
-    const articles = standard().articles
-    render(<Success articles={articles} />)
+    const comments = standard().comments
+    render(<Success comments={comments} />)
 
-    articles.forEach((article) => {
-      const truncatedBody = article.body.substring(0, 10)
-      const matchedBody = screen.getByText(truncatedBody, { exact: false })
-      const ellipsis = within(matchedBody).getByText('...', { exact: false })
-      expect(screen.getByText(article.title)).toBeInTheDocument()
-      expect(screen.queryByText(article.body)).not.toBeInTheDocument()
-      expect(matchedBody).toBeInTheDocument()
-      expect(ellipsis).toBeInTheDocument()
+    comments.forEach((comment) => {
+      expect(screen.getByText(comment.body)).toBeInTheDocument()
     })
   })
 })
